@@ -50,7 +50,7 @@ RUN pip3 install -Uq beautifulsoup4 \
     markdownify transformers torch
 
 # Copy the Python script
-COPY --chown=myuser src/conv_html_to_markdown.py ./
+COPY --chown=myuser src/* ./
 
 # Next, copy the remaining files and directories with the source code.
 # Since we do this after NPM install, quick build will be really fast
@@ -59,4 +59,4 @@ COPY --chown=myuser . ./
 
 # Run the image. If you know you won't need headful browsers,
 # you can remove the XVFB start script for a micro perf gain.
-CMD ./start_xvfb_and_run_cmd.sh && npm run start:prod --silent && python3 conv_html_to_markdown.py
+CMD ./start_xvfb_and_run_cmd.sh && npm run start:prod --silent && python3 main.py
