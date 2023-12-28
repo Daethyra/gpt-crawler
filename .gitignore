@@ -14,7 +14,7 @@ storage
 
 # any output from the crawler
 *.json
-
+.env
 pnpm-lock.yaml
 
 # Python 

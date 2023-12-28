@@ -5,8 +5,10 @@ import { glob } from "glob";
 import { Config, configSchema } from "./config.js";
 import { Page } from "playwright";
 import { isWithinTokenLimit } from "gpt-tokenizer";
+import { PathLike } from "fs";
 
 let pageCounter = 0;
+let crawler: PlaywrightCrawler;
 
 export function getPageHtml(page: Page, selector = "body") {
   return page.evaluate((selector) => {
@@ -52,19 +54,9 @@ export async function crawl(config: Config) {
   if (process.env.NO_CRAWL !== "true") {
     // PlaywrightCrawler crawls the web using a headless
     // browser controlled by the Playwright library.
-    const crawler = new PlaywrightCrawler({
+    crawler = new PlaywrightCrawler({
       // Use the requestHandler to process each of the crawled pages.
       async requestHandler({ request, page, enqueueLinks, log, pushData }) {
-        if (config.cookie) {
-          // Set the cookie for the specific URL
-          const cookie = {
-            name: config.cookie.name,
-            value: config.cookie.value,
-            url: request.loadedUrl,
-          };
-          await page.context().addCookies([cookie]);
-        }
-
         const title = await page.title();
         pageCounter++;
         log.info(
@@ -108,11 +100,23 @@ export async function crawl(config: Config) {
       // headless: false,
       preNavigationHooks: [
         // Abort requests for certain resource types
-        async ({ page, log }) => {
+        async ({ request, page, log }) => {
           // If there are no resource exclusions, return
           const RESOURCE_EXCLUSTIONS = config.resourceExclusions ?? [];
           if (RESOURCE_EXCLUSTIONS.length === 0) {
             return;
+          }
+          if (config.cookie) {
+            const cookies = (
+              Array.isArray(config.cookie) ? config.cookie : [config.cookie]
+            ).map((cookie) => {
+              return {
+                name: cookie.name,
+                value: cookie.value,
+                url: request.loadedUrl,
+              };
+            });
+            await page.context().addCookies(cookies);
           }
           await page.route(`**\/*.{${RESOURCE_EXCLUSTIONS.join()}}`, (route) =>
             route.abort("aborted"),
@@ -143,6 +147,7 @@ export async function crawl(config: Config) {
 }
 
 export async function write(config: Config) {
+  let nextFileNameString: PathLike = "";
   const jsonFiles = await glob("storage/datasets/default/*.json", {
     absolute: true,
   });
@@ -163,8 +168,14 @@ export async function write(config: Config) {
     `${config.outputFileName.replace(/\.json$/, "")}-${fileCounter}.json`;
 
   const writeBatchToFile = async (): Promise<void> => {
-    await writeFile(nextFileName(), JSON.stringify(currentResults, null, 2));
-    console.log(`Wrote ${currentResults.length} items to ${nextFileName()}`);
+    nextFileNameString = nextFileName();
+    await writeFile(
+      nextFileNameString,
+      JSON.stringify(currentResults, null, 2),
+    );
+    console.log(
+      `Wrote ${currentResults.length} items to ${nextFileNameString}`,
+    );
     currentResults = [];
     currentSize = 0;
     fileCounter++;
@@ -213,4 +224,31 @@ export async function write(config: Config) {
   if (currentResults.length > 0) {
     await writeBatchToFile();
   }
+
+  return nextFileNameString;
 }
+
+class GPTCrawlerCore {
+  config: Config;
+
+  constructor(config: Config) {
+    this.config = config;
+  }
+
+  async crawl() {
+    await crawl(this.config);
+  }
+
+  async write(): Promise<PathLike> {
+    // we need to wait for the file path as the path can change
+    return new Promise((resolve, reject) => {
+      write(this.config)
+        .then((outputFilePath) => {
+          resolve(outputFilePath);
+        })
+        .catch(reject);
+    });
+  }
+}
+
+export default GPTCrawlerCore;
