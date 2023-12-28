@@ -22,7 +22,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
     pattern = "output*.json"  # Pattern to match JSON files
     chunk_size = 512  # Adjust chunk size as needed
-    max_threads = 10  # Adjust the maximum number of threads as needed
+    max_threads = 15  # Adjust the maximum number of threads as needed
     output_file_name = "gpt-crawler-curated_markdown.md"
 
     try:

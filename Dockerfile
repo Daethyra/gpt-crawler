@@ -44,18 +44,20 @@ RUN npm --quiet set progress=false \
 # Switch user to ROOT for installation
 USER root
 RUN apt-get update \
-    && apt-get install -y python3 python3-pip
+    && apt-get install -y python3 python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 USER myuser
 RUN pip3 install -Uq beautifulsoup4 \
     markdownify transformers torch
 
-# Copy the Python script
-COPY --chown=myuser src/* ./
-
-# Next, copy the remaining files and directories with the source code.
 # Since we do this after NPM install, quick build will be really fast
 # for most source file changes.
 COPY --chown=myuser . ./
+
+# Download the Jina Embeddings model
+RUN python3 download_jina.py
 
 # Run the image. If you know you won't need headful browsers,
 # you can remove the XVFB start script for a micro perf gain.
