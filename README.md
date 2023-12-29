@@ -99,6 +99,17 @@ npm start
 
 ### Alternative methods
 
+#### Daethyra's method:
+In my experience, the directions for using Docker by BuilderIO has never worked. The following instructions have never failed me.
+1. In root dir, configure your `config.ts` and set the site you'd like to scrape along with the maximum number of pages to scrape.
+2. Run:
+  - In PowerShell: `docker build -t gpt-crawler . ; docker run -it gpt-crawler`
+  - In Bash: `docker build -t gpt-crawler . && docker run -it gpt-crawler`
+3. Wait for finish. The build and execution process will take care of the rest.
+4. Once done, save the file 'gpt-crawler-curated_markdown.md' locally for retrieval augmented generation.
+5. (Optional) Follow [these instructions](./README.md#Upload-your-data-to-OpenAI) to create an AI Assistant via OpenAI hosting.
+
+
 #### [Running in a container with Docker](./containerapp/README.md)
 
 To obtain the `output.json` with a containerized execution, go into the `containerapp` directory and modify the `config.ts` as shown above. The `output.json`file should be generated in the data folder. Note: the `outputFileName` property in the `config.ts` file in the `containerapp` directory is configured to work with the container.
