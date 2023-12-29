@@ -52,6 +52,9 @@ USER myuser
 RUN pip3 install -Uq beautifulsoup4 \
     markdownify transformers torch
 
+# Copy the Python package files
+COPY --chown=myuser src/conv_html_to_markdown/* ./
+
 # Since we do this after NPM install, quick build will be really fast
 # for most source file changes.
 COPY --chown=myuser . ./
