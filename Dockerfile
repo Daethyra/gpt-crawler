@@ -32,7 +32,7 @@ COPY --chown=myuser package*.json ./
 # keep the image small. Avoid logging too much and print the dependency
 # tree for debugging
 RUN npm --quiet set progress=false \
-    && npm install --omit=dev --omit=optional \
+    && npm install --include=dev --audit=false \
     && echo "Installed NPM packages:" \
     && (npm list --omit=dev --all || true) \
     && echo "Node.js version:" \
@@ -51,6 +51,9 @@ RUN apt-get update \
 USER myuser
 RUN pip3 install -Uq beautifulsoup4 \
     markdownify transformers torch
+
+# Copy in the Python package's file
+COPY --chown=myuser src/html_to_markdown/* .
 
 # Since we do this after NPM install, quick build will be really fast
 # for most source file changes.
