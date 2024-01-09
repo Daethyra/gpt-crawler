@@ -33,9 +33,6 @@ USER myuser
 RUN pip3 install -Uq beautifulsoup4 \
     markdownify transformers torch
 
-# Copy the Python package files
-COPY --chown=myuser src/conv_html_to_markdown/* ./
-
 # Copy only built JS files from builder image
 COPY --from=builder --chown=myuser /home/myuser/dist ./dist
 
@@ -60,8 +57,8 @@ RUN npm --quiet set progress=false \
 COPY --chown=myuser . ./
 
 # Download the Jina Embeddings model
-RUN python3 download_jina.py
+RUN python3 src/conv_html_to_markdown/download_jina.py
 
 # Run the image. If you know you won't need headful browsers,
 # you can remove the XVFB start script for a micro perf gain.
-CMD ./start_xvfb_and_run_cmd.sh && npm run start:prod --silent && python3 main.py
+CMD ./start_xvfb_and_run_cmd.sh && npm run start:prod --silent && python3 src/conv_html_to_markdown/main.py
