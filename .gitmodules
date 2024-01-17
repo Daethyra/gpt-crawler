@@ -1,0 +1,3 @@
+[submodule "src/conv_html_to_markdown"]
+	path = src/conv_html_to_markdown
+	url = https://github.com/Daethyra/conv_html_to_markdown

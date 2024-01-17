@@ -61,4 +61,4 @@ RUN python3 src/conv_html_to_markdown/download_jina.py
 
 # Run the image. If you know you won't need headful browsers,
 # you can remove the XVFB start script for a micro perf gain.
-CMD ./start_xvfb_and_run_cmd.sh && npm run start:prod --silent && python3 src/conv_html_to_markdown/main.py
+CMD ./start_xvfb_and_run_cmd.sh && npm run start:prod --silent && python3 src/conv_html_to_markdown/src/conv_html_to_markdown/main.py
