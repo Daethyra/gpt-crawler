@@ -57,7 +57,7 @@ RUN npm --quiet set progress=false \
 COPY --chown=myuser . ./
 
 # Download the Jina Embeddings model
-RUN python3 src/conv_html_to_markdown/download_jina.py
+RUN python3 src/conv_html_to_markdown/src/conv_html_to_markdown/download_jina.py
 
 # Run the image. If you know you won't need headful browsers,
 # you can remove the XVFB start script for a micro perf gain.
