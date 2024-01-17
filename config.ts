@@ -1,10 +1,10 @@
 import { Config } from "./src/config";
 
 export const defaultConfig: Config = {
-  url: "https://python.langchain.com/docs/get_started/introduction",
+  url: "https://js.langchain.com/docs/get_started/introduction",
   match: [
-    "https://python.langchain.com/docs/**",
+    "https://js.langchain.com/docs/**",
   ],
-    maxPagesToCrawl: 15,
+    maxPagesToCrawl: 50,
   outputFileName: "output.json",
 };
