@@ -31,7 +31,7 @@ RUN apt-get update \
 
 USER myuser
 RUN pip3 install -Uq beautifulsoup4 \
-    markdownify transformers torch
+    markdownify transformers torch aiofiles asyncio
 
 # Copy only built JS files from builder image
 COPY --from=builder --chown=myuser /home/myuser/dist ./dist

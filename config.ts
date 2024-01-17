@@ -5,6 +5,6 @@ export const defaultConfig: Config = {
   match: [
     "https://python.langchain.com/docs/**",
   ],
-    maxPagesToCrawl: 100,
+    maxPagesToCrawl: 15,
   outputFileName: "output.json",
 };
