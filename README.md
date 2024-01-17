@@ -4,31 +4,18 @@ Crawl a site to generate knowledge files to create your own custom GPT from one 
 
 ![Gif showing the crawl run](https://github.com/BuilderIO/gpt-crawler/assets/844291/feb8763a-152b-4708-9c92-013b5c70d2f2)
 
-- [Example](#example)
 - [Get started](#get-started)
   - [Running locally](#running-locally)
     - [Clone the repository](#clone-the-repository)
-    - [Install dependencies](#install-dependencies)
-    - [Configure the crawler](#configure-the-crawler)
-    - [Run your crawler](#run-your-crawler)
-  - [Alternative methods](#alternative-methods)
-    - [Running in a container with Docker](#running-in-a-container-with-docker)
-    - [Running as a CLI](#running-as-a-cli)
-      - [Development](#development)
-  - [Upload your data to OpenAI](#upload-your-data-to-openai)
-    - [Create a custom GPT](#create-a-custom-gpt)
-    - [Create a custom assistant](#create-a-custom-assistant)
+      - [Run in Docker Container](#docker-container--virtualize-the-run)
+      - [Run on Host Operating System](#run-on-host-os)
+        - [Install dependencies](#install-dependencies)
+        - [Configure the crawler](#configure-the-crawler)
+        - [Run your crawler](#run-your-crawler)
+- [Upload your data to OpenAI](#upload-your-data-to-openai)
+  - [Create a custom GPT](#create-a-custom-gpt)
+  - [Create a custom assistant](#create-a-custom-assistant)
 - [Contributing](#contributing)
-
-## Example
-
-[Here is a custom GPT](https://chat.openai.com/g/g-kywiqipmR-builder-io-assistant) that I quickly made to help answer questions about how to use and integrate [Builder.io](https://www.builder.io) by simply providing the URL to the Builder docs.
-
-This project crawled the docs and generated the file that I uploaded as the basis for the custom GPT.
-
-[Try it out yourself](https://chat.openai.com/g/g-kywiqipmR-builder-io-assistant) by asking questions about how to integrate Builder.io into a site.
-
-> Note that you may need a paid ChatGPT plan to access this feature
 
 ## Get started
 
@@ -36,19 +23,32 @@ This project crawled the docs and generated the file that I uploaded as the basi
 
 #### Clone the repository
 
-Be sure you have Node.js >= 16 installed.
-
 ```sh
-git clone https://github.com/builderio/gpt-crawler
+git clone --recurse-submodules https://github.com/Daethyra/gpt-crawler
 ```
 
-#### Install dependencies
+
+#### Docker Container | Virtualize the Run (Recommended method)
+
+In my experience, the directions for using Docker by BuilderIO has never worked. However, the following instructions have never failed me.
+1. In root dir, configure your `config.ts` and set the site you'd like to scrape along with the maximum number of pages to scrape.
+2. Run:
+  - In PowerShell: `docker build -t gpt-crawler . ; docker run -it gpt-crawler`
+  - In Bash: `docker build -t gpt-crawler . && docker run -it gpt-crawler`
+3. Wait for finish. The build and execution process will take care of the rest.
+4. Once done, save the file 'gpt-crawler-curated_markdown.md' locally for retrieval augmented generation.
+5. (Optional) Follow [the instructions below](./README.md#Upload-your-data-to-OpenAI) to create an AI Assistant via OpenAI hosting.
+
+
+#### Run on Host OS
+
+##### Install dependencies
 
 ```sh
 npm i
 ```
 
-#### Configure the crawler
+##### Configure the crawler
 
 Open [config.ts](config.ts) and edit the `url` and `selector` properties to match your needs.
 
@@ -91,34 +91,17 @@ type Config = {
 };
 ```
 
-#### Run your crawler
+##### Run your crawler
 
 ```sh
 npm start
 ```
 
-### Alternative methods
-
-#### Daethyra's method:
-In my experience, the directions for using Docker by BuilderIO has never worked. The following instructions have never failed me.
-1. In root dir, configure your `config.ts` and set the site you'd like to scrape along with the maximum number of pages to scrape.
-2. Run:
-  - In PowerShell: `docker build -t gpt-crawler . ; docker run -it gpt-crawler`
-  - In Bash: `docker build -t gpt-crawler . && docker run -it gpt-crawler`
-3. Wait for finish. The build and execution process will take care of the rest.
-4. Once done, save the file 'gpt-crawler-curated_markdown.md' locally for retrieval augmented generation.
-5. (Optional) Follow [these instructions](./README.md#Upload-your-data-to-OpenAI) to create an AI Assistant via OpenAI hosting.
-
-
-#### [Running in a container with Docker](./containerapp/README.md)
-
-To obtain the `output.json` with a containerized execution, go into the `containerapp` directory and modify the `config.ts` as shown above. The `output.json`file should be generated in the data folder. Note: the `outputFileName` property in the `config.ts` file in the `containerapp` directory is configured to work with the container.
-
-### Upload your data to OpenAI
+## Upload your data to OpenAI
 
 The crawl will generate a file called `output.json` at the root of this project. Upload that [to OpenAI](https://platform.openai.com/docs/assistants/overview) to create your custom assistant or custom GPT.
 
-#### Create a custom GPT
+### Create a custom GPT
 
 Use this option for UI access to your generated knowledge that you can easily share with others
 
@@ -134,7 +117,7 @@ Use this option for UI access to your generated knowledge that you can easily sh
 
 ![Gif of how to upload a custom GPT](https://github.com/BuilderIO/gpt-crawler/assets/844291/22f27fb5-6ca5-4748-9edd-6bcf00b408cf)
 
-#### Create a custom assistant
+### Create a custom assistant
 
 Use this option for API access to your generated knowledge that you can integrate into your product.
 
