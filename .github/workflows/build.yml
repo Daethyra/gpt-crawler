@@ -1,4 +1,4 @@
-name: Build workflow
+name: Build Tester
 
 on:
   pull_request:
